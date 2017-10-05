@@ -62,7 +62,7 @@ Direction Joystick_getDirection(void){
 	}
 }
 
-void exportPins(void){
+static void exportPins(void){
 	setPinValue((EXPORT), (JOYSTICK_UP_PIN));
 	setPinValue((EXPORT), (JOYSTICK_DOWN_PIN));
 	setPinValue((EXPORT), (JOYSTICK_LEFT_PIN));
