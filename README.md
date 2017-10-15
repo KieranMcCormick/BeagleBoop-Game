@@ -43,7 +43,7 @@ You will need to copy this library to `${PROJECT_BINARY_DIR}/lib/json-c/` once y
 i.e.
 
 ```sh
-$ cp /usr/local/lib/libjson-c.a
+$ cp /usr/local/lib/libjson-c.a ${PROJECT_BINARY_DIR}/lib/json-c/
 ```
 
 
