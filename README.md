@@ -70,7 +70,7 @@ $ git clone https://csil-git1.cs.surrey.sfu.ca/Beagle-Boop/Beagle-Boop-Game.git
 $ cd Beagle-Boop-Game
 $ mkdir build
 $ cd build/
-$ cmake .. /
+$ cmake ../
 $ make
 ```
 
