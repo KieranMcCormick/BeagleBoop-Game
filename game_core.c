@@ -1,6 +1,11 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "game_core.h"
 #include "seg_display.h"
 #include "client_interface.h"
+#include "InputManager.h"
 
 static int gameOver;
 static char *gameOverMessage;
@@ -12,7 +17,6 @@ static char *playerName;
 
 //TODO:
 //Call buzzer
-//Keep track of score and set seg display
 
 static int blacklistContains(int input)
 {
@@ -23,15 +27,15 @@ static int blacklistContains(int input)
 			return 1;
 		}
 	}
-	return false;
+	return 0;
 }
 
-static void getNextInput()
+static int getNextInput()
 {
-	int validInputs[INPUT_COUNT];
+	int validInputs[NUMBER_OF_INPUTS];
 
 	int j = 0;
-	for(int i = 0;i < INPUT_COUNT;i++)
+	for(int i = 0;i < NUMBER_OF_INPUTS;i++)
 	{
 		if(!blacklistContains(i))
 		{
@@ -40,7 +44,7 @@ static void getNextInput()
 		}
 	}
 	
-	return validInputs[rand() % (INPUT_COUNT - gameSpec.inputBlacklistSize)];
+	return validInputs[rand() % (NUMBER_OF_INPUTS - gameSpec.inputBlacklistSize)];
 }
 
 void startGame()
@@ -48,43 +52,37 @@ void startGame()
 	gameOver = 0;
 
 	printf("Enter your name: ");
-	scanf("%s", &playerName);
+	scanf("%s", playerName);
 	printf("Starting game!");
 
 	gameSpec = getNewGameSpec(playerName);
 	srand(gameSpec.sequenceSeed);
-	initInputMaster(gameSpec.inputTime);
+	InputManager_init(gameSpec.inputTime);
 
 	playerStats.missCount = 0;
 	playerStats.wrongInputCount = 0;
-	playerStats.averageInputTime = FLT_MAX;
+	playerStats.averageInputTime = gameSpec.inputTime;
 	playerStats.score = 0;
 
 	while(!gameOver)
 	{
 		int requestedInput = getNextInput();
-		printf("%s!\n", inputActionStrings[requestedInput]);
+		printf("%s!\n", InputManager_getInputString(requestedInput));
 
-		int success;
-		clock_t startTime, endTime;
-
-		startTime = clock();
-		success = waitForInput(requestedInput);
-		endTime = clock();
-
-		int timeTaken = (endTime - startTime) * 1000 / CLOCKS_PER_SEC;
+		int timeTaken;
+		int actualInput = InputManager_waitForInput(&timeTaken);
 		int totalIterations = playerStats.score + playerStats.wrongInputCount + playerStats.missCount + 1;
 		playerStats.averageInputTime = (playerStats.averageInputTime * (totalIterations - 1) / totalIterations) + (timeTaken / totalIterations);
 
-		if(success != CORRECT_INPUT)
+		if(actualInput != requestedInput)
 		{
-			if(success == WRONG_INPUT)
-			{
-				playerStats.wrongInputCount++;
-			}
-			else if(success == NO_INPUT)
+			if(actualInput == NO_INPUT)
 			{
 				playerStats.missCount++;
+			}
+			else
+			{
+				playerStats.wrongInputCount++;
 			}
 
 			int livesLeft = playerStats.wrongInputCount + playerStats.missCount - gameSpec.lives;
@@ -103,8 +101,8 @@ void startGame()
 		}
 		else
 		{
-			score++;
-			displayNumber(score);
+			playerStats.score++;
+			displayNumber(playerStats.score);
 		}
 		reportPlayerStats(playerStats);
 	}

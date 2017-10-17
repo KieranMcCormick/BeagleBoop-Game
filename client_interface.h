@@ -1,6 +1,6 @@
 typedef struct
 {
-	struct timespec_t inputTime;
+	int inputTime; //milliseconds
 	int lives;
 	unsigned sequenceSeed;
 	int *inputBlacklist;

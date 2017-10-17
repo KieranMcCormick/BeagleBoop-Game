@@ -57,6 +57,7 @@ Input InputManager_waitForInput(int* inputTimeMilliseconds){
     Acceleration initialOrientation = Accelerometer_getAcceleration();
     int initialVoltage = Potentiometer_getValue();
     int millisecondsSinceStart = 0;
+    *inputTimeMilliseconds = 0;
     while(millisecondsSinceStart < timeoutInMilliseconds){
         Direction joystickInput = Joystick_getDirection();
         if(joystickInput != NEUTRAL){
