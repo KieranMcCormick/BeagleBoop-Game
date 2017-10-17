@@ -6,12 +6,14 @@
 #include "Potentiometer.h"
 #include "Accelerometer.h"
 #include "InputManager.h"
-#include <time.h>
+#include <sys/time.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 #define ACCELEROMETER_THRESHOLD 750
 #define POTENTIOMETER_THRESHOLD 250
 #define MILLISECONDS_PER_SECOND 1000
+#define MICROSECONDS_PER_MILLISECOND 1000
 
 static int timeoutInMilliseconds;
 
@@ -49,28 +51,30 @@ char* InputManager_getInputString(Input input){
 }
 
 Input InputManager_waitForInput(int* inputTimeMilliseconds){
-    clock_t startTime = clock();
+    struct timeval startTime;
+    struct timeval currentTime;
+    gettimeofday(&startTime, NULL);
     Acceleration initialOrientation = Accelerometer_getAcceleration();
     int initialVoltage = Potentiometer_getValue();
     int millisecondsSinceStart = 0;
     while(millisecondsSinceStart < timeoutInMilliseconds){
         Direction joystickInput = Joystick_getDirection();
         if(joystickInput != NEUTRAL){
-            *inputTimeMilliseconds = millisecondsSinceStart;
             return getJoystickInput(joystickInput);
         }
         Acceleration currentOrientation = Accelerometer_getAcceleration();
-        if(abs(initialOrientation.x - currentOrientation.x) > ACCELEROMETER_THRESHOLD ||
-                abs(initialOrientation.y - currentOrientation.y) > ACCELEROMETER_THRESHOLD){
-            *inputTimeMilliseconds = millisecondsSinceStart;
+        if(abs(initialOrientation.x - currentOrientation.x) > (ACCELEROMETER_THRESHOLD) ||
+                abs(initialOrientation.y - currentOrientation.y) > (ACCELEROMETER_THRESHOLD)){
             return getAccelerometerInput(initialOrientation, currentOrientation);
         }
         int currentVoltage = Potentiometer_getValue();
-        if(abs(initialVoltage - currentVoltage) > POTENTIOMETER_THRESHOLD){
-            *inputTimeMilliseconds = millisecondsSinceStart;
+        if(abs(initialVoltage - currentVoltage) > (POTENTIOMETER_THRESHOLD)){
             return POTENTIOMETER_TURN;
         }
-        millisecondsSinceStart = (double)(clock() - startTime) / CLOCKS_PER_SEC * MILLISECONDS_PER_SECOND;
+        gettimeofday(&currentTime, NULL);
+        millisecondsSinceStart = (currentTime.tv_sec - startTime.tv_sec) * (MILLISECONDS_PER_SECOND);
+        millisecondsSinceStart += (currentTime.tv_usec - startTime.tv_usec) / (MICROSECONDS_PER_MILLISECOND);
+        *inputTimeMilliseconds = millisecondsSinceStart;
     }
     *inputTimeMilliseconds = timeoutInMilliseconds;
     return NO_INPUT;
