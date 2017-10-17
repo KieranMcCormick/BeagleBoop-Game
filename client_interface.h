@@ -12,6 +12,7 @@ typedef struct
 	int missCount;
 	int wrongInputCount;
 	float averageInputTime;
+	int score;
 } STATS;
 
 GAMESPEC getNewGameSpec(char *playerName);

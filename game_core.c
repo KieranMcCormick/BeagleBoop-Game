@@ -1,4 +1,5 @@
 #include "game_core.h"
+#include "seg_display.h"
 #include "client_interface.h"
 
 static int gameOver;
@@ -8,6 +9,10 @@ static GAMESPEC gameSpec;
 static STATS playerStats;
 
 static char *playerName;
+
+//TODO:
+//Call buzzer
+//Keep track of score and set seg display
 
 static int blacklistContains(int input)
 {
@@ -48,17 +53,29 @@ void startGame()
 
 	gameSpec = getNewGameSpec(playerName);
 	srand(gameSpec.sequenceSeed);
+	initInputMaster(gameSpec.inputTime);
 
 	playerStats.missCount = 0;
 	playerStats.wrongInputCount = 0;
 	playerStats.averageInputTime = FLT_MAX;
+	playerStats.score = 0;
 
 	while(!gameOver)
 	{
 		int requestedInput = getNextInput();
 		printf("%s!\n", inputActionStrings[requestedInput]);
 
-		int success = waitForInput(requestedInput, gameSpec.inputTime);
+		int success;
+		clock_t startTime, endTime;
+
+		startTime = clock();
+		success = waitForInput(requestedInput);
+		endTime = clock();
+
+		int timeTaken = (endTime - startTime) * 1000 / CLOCKS_PER_SEC;
+		int totalIterations = playerStats.score + playerStats.wrongInputCount + playerStats.missCount + 1;
+		playerStats.averageInputTime = (playerStats.averageInputTime * (totalIterations - 1) / totalIterations) + (timeTaken / totalIterations);
+
 		if(success != CORRECT_INPUT)
 		{
 			if(success == WRONG_INPUT)
@@ -83,9 +100,13 @@ void startGame()
 			{
 				printf("Woops! %d lives left!\n", livesLeft);
 			}
-
-			reportPlayerStats(playerStats);
 		}
+		else
+		{
+			score++;
+			displayNumber(score);
+		}
+		reportPlayerStats(playerStats);
 	}
 
 	printf("Game Over!\n%s\n", gameOverMessage);
