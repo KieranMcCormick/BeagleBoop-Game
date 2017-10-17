@@ -53,7 +53,7 @@ void startGame()
 
 	printf("Enter your name: ");
 	scanf("%s", playerName);
-	printf("Starting game!");
+	printf("Starting game!\n");
 
 	gameSpec = getNewGameSpec(playerName);
 	srand(gameSpec.sequenceSeed);
@@ -85,7 +85,7 @@ void startGame()
 				playerStats.wrongInputCount++;
 			}
 
-			int livesLeft = playerStats.wrongInputCount + playerStats.missCount - gameSpec.lives;
+			int livesLeft = gameSpec.lives - (playerStats.wrongInputCount + playerStats.missCount);
 			if(livesLeft <= 0)
 			{
 				endGame("No lives left!");
