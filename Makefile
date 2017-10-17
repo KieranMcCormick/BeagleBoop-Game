@@ -1,7 +1,9 @@
-GCC = arm-linux-gnueabihf-gcc
-COMPILE_FLAGS = -Wall -g -std=c99 -D _POSIX_C_SOURCE=200809L -Werror -pthread
-FILE_NAME = accelerometer
+OUTFILE = inputTest
+OUTDIR = $(HOME)/cmpt433/public/myApps
+
+CROSS_COMPILE = arm-linux-gnueabihf-
+CC_C = $(CROSS_COMPILE)gcc
+CFLAGS = -Wall -g -std=c99 -D _POSIX_C_SOURCE=200809L -Werror
 
 all:
-	$(GCC) $(COMPILE_FLAGS) $(FILE_NAME).c test_accelerometer.c -o $(FILE_NAME)
-	cp $(FILE_NAME) $(HOME)/cmpt433/public/myApps/
+	$(CC_C) $(CFLAGS) InputTest.c InputManager.c Accelerometer.c Potentiometer.c Joystick.c -o $(OUTDIR)/$(OUTFILE)
