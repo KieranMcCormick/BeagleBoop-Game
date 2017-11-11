@@ -47,7 +47,7 @@ static int getNextInput()
 	return validInputs[rand() % (NUMBER_OF_INPUTS - gameSpec.inputBlacklistSize)];
 }
 
-void startGame()
+void *startGame(GAMESPEC g)
 {
 	gameOver = 0;
 
@@ -55,7 +55,7 @@ void startGame()
 	scanf("%s", playerName);
 	printf("Starting game!\n");
 
-	gameSpec = getNewGameSpec(playerName);
+	gameSpec = g;
 	srand(gameSpec.sequenceSeed);
 	InputManager_init(gameSpec.inputTime);
 
@@ -109,6 +109,8 @@ void startGame()
 
 	printf("Game Over!\n%s\n", gameOverMessage);
 	free(gameOverMessage);
+
+	return NULL;
 }
 
 void endGame(char *message)

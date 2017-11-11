@@ -1,3 +1,6 @@
+#ifndef CLIENT_INTERFACE_H
+#define CLIENT_INTERFACE_H
+
 typedef struct
 {
 	int inputTime; //milliseconds
@@ -17,3 +20,5 @@ typedef struct
 
 GAMESPEC getNewGameSpec(char *playerName);
 void reportPlayerStats(STATS playerStats);
+
+#endif
