@@ -1,7 +1,9 @@
 #include "game_core.h"
+#include "client_interface.h"
 
 int main()
 {
-	startGame();
+	GAMESPEC gameSettings = getNewGameSpec("test");
+	startGame(gameSettings);
 	return 0;
 }

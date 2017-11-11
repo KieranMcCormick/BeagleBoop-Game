@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include "game_core.h"
 #include "seg_display.h"
@@ -14,6 +15,8 @@ static GAMESPEC gameSpec;
 static STATS playerStats;
 
 static char *playerName;
+
+static struct timespec delay = {1l, 0l};
 
 //TODO:
 //Call buzzer
@@ -105,6 +108,7 @@ void *startGame(GAMESPEC g)
 			displayNumber(playerStats.score);
 		}
 		reportPlayerStats(playerStats);
+		nanosleep(&delay, (struct timespec*) NULL);
 	}
 
 	printf("Game Over!\n%s\n", gameOverMessage);
