@@ -7,6 +7,7 @@
 #include "seg_display.h"
 #include "client_interface.h"
 #include "InputManager.h"
+#include "textToSpeech.h"
 
 static int gameOver;
 static char *gameOverMessage;
@@ -71,6 +72,7 @@ void *startGame(GAMESPEC g)
 	{
 		int requestedInput = getNextInput();
 		printf("%s!\n", InputManager_getInputString(requestedInput));
+		TextToSpeech_speak(requestedInput);
 
 		int timeTaken;
 		int actualInput = InputManager_waitForInput(&timeTaken);
