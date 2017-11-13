@@ -2,7 +2,7 @@
 #include "InputManager.h"
 
 char *soundFiles[NUMBER_OF_INPUTS];
-wavedata_t *audioFiles[NUMBER_OF_INPUTS];
+wavedata_t audioFiles[NUMBER_OF_INPUTS];
 
 void TextToSpeech_init()
 {
@@ -12,7 +12,7 @@ void TextToSpeech_init()
 	soundFiles[JOYSTICK_DOWN] = "joystick/down";
 	soundFiles[JOYSTICK_LEFT] = "joystick/left";
 	soundFiles[JOYSTICK_RIGHT] = "joystick/right";
-	soundFiles[JOYSTICK_CENTER] = "joystick/center";
+	soundFiles[JOYSTICK_CENTER] = "joystick/in";
 	soundFiles[ACCELEROMETER_TILT_LEFT] = "accelerometer/left";
 	soundFiles[ACCELEROMETER_TILT_RIGHT] = "accelerometer/right";
 	soundFiles[ACCELEROMETER_TILT_FORWARD] = "accelerometer/forward";
@@ -21,7 +21,7 @@ void TextToSpeech_init()
 
 	for(int i = 0;i < NUMBER_OF_INPUTS;i++)
 	{
-		AudioMixer_readWaveFileIntoMemory(soundFiles[i], audioFiles[i]);
+		AudioMixer_readWaveFileIntoMemory(soundFiles[i], &(audioFiles[i]));
 	}
 }
 
@@ -31,11 +31,11 @@ void TextToSpeech_cleanup()
 
 	for(int i = 0;i < NUMBER_OF_INPUTS;i++)
 	{
-		AudioMixer_freeWaveFileData(audioFiles[i]);
+		AudioMixer_freeWaveFileData(&(audioFiles[i]));
 	}
 }
 
 void TextToSpeech_speak(int sound)
 {
-	AudioMixer_queueSound(audioFiles[sound]);
+	AudioMixer_queueSound(&(audioFiles[sound]));
 }

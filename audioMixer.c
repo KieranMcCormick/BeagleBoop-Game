@@ -10,7 +10,7 @@ static snd_pcm_t *handle;
 
 #define DEFAULT_VOLUME 80
 
-#define SAMPLE_RATE 44100
+#define SAMPLE_RATE 16000
 #define NUM_CHANNELS 1
 #define SAMPLE_SIZE (sizeof(short)) // bytes per sample
 // Sample size note: This works for mono files because each sample ("frame") is 1 value.
@@ -287,7 +287,7 @@ void *playbackThread(void *arg)
 		// Check for (and handle) possible error conditions on output
 		if (frames < 0)
 		{
-			fprintf(stderr, "AudioMixer: writei() returned %li\n", frames);
+			//fprintf(stderr, "AudioMixer: writei() returned %li\n", frames);
 			frames = snd_pcm_recover(handle, frames, 1);
 		}
 		if(frames < 0)
