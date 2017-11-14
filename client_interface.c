@@ -16,5 +16,5 @@ GAMESPEC getNewGameSpec(char *playerName)
 
 void reportPlayerStats(STATS playerStats)
 {
-	printf("Misses: %d, Incorrect: %d, Average Input Time: %f, score: %d\n", playerStats.missCount, playerStats.wrongInputCount, playerStats.averageInputTime, playerStats.score);
+	printf("Misses: %d, Incorrect: %d, Average Input Time: %f ms, score: %d\n", playerStats.missCount, playerStats.wrongInputCount, playerStats.averageInputTime, playerStats.score);
 }
