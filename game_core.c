@@ -17,7 +17,7 @@ static STATS playerStats;
 
 static char *playerName;
 
-static struct timespec delay = {1l, 0l};
+static struct timespec delay = {2l, 0l};
 
 //TODO:
 //Call buzzer
