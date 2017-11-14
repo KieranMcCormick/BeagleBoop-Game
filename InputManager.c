@@ -27,8 +27,8 @@ static char* inputStrings[NUMBER_OF_INPUTS] = {
         "Push the CENTER on the joystick",
         "Tilt the board LEFT",
         "Tilt the board RIGHT",
-        "Tilt the board FORWARD",
-        "Tilt the board BACK",
+        "Pitch the board UP",
+        "Pitch the board DOWN",
         "Turn the potentiometer"
 };
 
