@@ -15,8 +15,8 @@ void TextToSpeech_init()
 	soundFiles[JOYSTICK_CENTER] = "joystick/in";
 	soundFiles[ACCELEROMETER_TILT_LEFT] = "accelerometer/left";
 	soundFiles[ACCELEROMETER_TILT_RIGHT] = "accelerometer/right";
-	soundFiles[ACCELEROMETER_TILT_FORWARD] = "accelerometer/forward";
-	soundFiles[ACCELEROMETER_TILT_BACK] = "accelerometer/back";
+	soundFiles[ACCELEROMETER_PITCH_UP] = "accelerometer/forward";
+	soundFiles[ACCELEROMETER_PITCH_DOWN] = "accelerometer/back";
 	soundFiles[POTENTIOMETER_TURN] = "potentiometer/turn";
 
 	for(int i = 0;i < NUMBER_OF_INPUTS;i++)
