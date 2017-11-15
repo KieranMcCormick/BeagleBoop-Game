@@ -106,10 +106,10 @@ static Input getAccelerometerInput(Acceleration initialOrientation, Acceleration
         return ACCELEROMETER_TILT_LEFT;
     }
     else if(currentOrientation.y - initialOrientation.y > (ACCELEROMETER_THRESHOLD)){
-        return ACCELEROMETER_TILT_BACK;
+        return ACCELEROMETER_PITCH_DOWN;
     }
     else if(currentOrientation.y - initialOrientation.y < (-ACCELEROMETER_THRESHOLD)){
-        return ACCELEROMETER_TILT_FORWARD;
+        return ACCELEROMETER_PITCH_UP;
     }
     return NO_INPUT;
 }
