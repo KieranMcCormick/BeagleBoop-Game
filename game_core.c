@@ -19,9 +19,6 @@ static char *playerName;
 
 static struct timespec delay = {2l, 0l};
 
-//TODO:
-//Call buzzer
-
 static int blacklistContains(int input)
 {
 	for(int i = 0;i < gameSpec.inputBlacklistSize;i++)
@@ -62,6 +59,7 @@ void *startGame(GAMESPEC g)
 	gameSpec = g;
 	srand(gameSpec.sequenceSeed);
 	InputManager_init(gameSpec.inputTime);
+	displayNumber(0);
 
 	playerStats.missCount = 0;
 	playerStats.wrongInputCount = 0;

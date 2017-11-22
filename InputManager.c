@@ -19,24 +19,26 @@ static int timeoutInMilliseconds;
 
 static Input getJoystickInput(Direction joystickInput);
 static Input getAccelerometerInput(Acceleration initialOrientation, Acceleration currentOrientation);
-static char* inputStrings[NUMBER_OF_INPUTS] = {
-        "Push UP on the joystick",
-        "Push DOWN on the joystick",
-        "Push LEFT on the joystick",
-        "Push RIGHT on the joystick",
-        "Push the CENTER on the joystick",
-        "Tilt the board LEFT",
-        "Tilt the board RIGHT",
-        "Pitch the board UP",
-        "Pitch the board DOWN",
-        "Turn the potentiometer"
-};
+static char* inputStrings[NUMBER_OF_INPUTS];
 
-void InputManager_init(int specifiedTimeoutInMilliseconds){
+void InputManager_init(int specifiedTimeoutInMilliseconds)
+{
     timeoutInMilliseconds = specifiedTimeoutInMilliseconds;
     Joystick_init();
     Potentiometer_init();
     Accelerometer_init();
+
+    inputStrings[JOYSTICK_UP] = "Push UP on the joystick";
+    inputStrings[JOYSTICK_DOWN] = "Push DOWN on the joystick";
+    inputStrings[JOYSTICK_LEFT] = "Push LEFT on the joystick";
+    inputStrings[JOYSTICK_RIGHT] = "Push RIGHT on the joystick";
+    inputStrings[JOYSTICK_CENTER] = "Push the CENTER on the joystick";
+    inputStrings[ACCELEROMETER_TILT_LEFT] = "Tilt the board LEFT";
+    inputStrings[ACCELEROMETER_TILT_RIGHT] = "Tilt the board RIGHT";
+    inputStrings[ACCELEROMETER_PITCH_UP] = "Pitch the board UP";
+    inputStrings[ACCELEROMETER_PITCH_DOWN] = "Pitch the board DOWN";
+    inputStrings[POTENTIOMETER_TURN] = "Turn the potentiometer";
+    inputStrings[BUTTON_SEQUENCE] = "Push the buttons in the order the lights flash";
 }
 
 void InputManager_cleanup(void){

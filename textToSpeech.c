@@ -18,6 +18,7 @@ void TextToSpeech_init()
 	soundFiles[ACCELEROMETER_PITCH_UP] = "accelerometer/forward";
 	soundFiles[ACCELEROMETER_PITCH_DOWN] = "accelerometer/back";
 	soundFiles[POTENTIOMETER_TURN] = "potentiometer/turn";
+	soundFiles[BUTTON_SEQUENCE] = "buttons/sequence";
 
 	for(int i = 0;i < NUMBER_OF_INPUTS;i++)
 	{
