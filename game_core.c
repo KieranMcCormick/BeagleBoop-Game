@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <pthread.h>
 
 #include "game_core.h"
 #include "seg_display.h"
 #include "client_interface.h"
 #include "InputManager.h"
 #include "textToSpeech.h"
+#include "LED.h"
 
 static int gameOver;
 static char *gameOverMessage;
@@ -18,6 +20,9 @@ static STATS playerStats;
 static char *playerName;
 
 static struct timespec delay = {2l, 0l};
+
+static LED *ledFlashes;
+static int ledFlashCount;
 
 static int blacklistContains(int input)
 {
@@ -44,8 +49,31 @@ static int getNextInput()
 			j++;
 		}
 	}
+
+	int nextInput = validInputs[rand() % (NUMBER_OF_INPUTS - gameSpec.inputBlacklistSize)];
+
+	if(nextInput == BUTTON_SEQUENCE)
+	{
+		ledFlashCount = (rand() % 4) + 2;
+		ledFlashes = malloc(sizeof(LED) * ledFlashCount);
+
+		for(int i = 0;i < ledFlashCount;i++)
+		{
+			ledFlashes[i] = rand() % NUMBER_OF_LEDS;
+		}
+	}
 	
-	return validInputs[rand() % (NUMBER_OF_INPUTS - gameSpec.inputBlacklistSize)];
+	return nextInput;
+}
+
+void *flashLEDS()
+{
+	for(int i = 0;i < ledFlashCount;i++)
+	{
+		LED_flashLED(ledFlashes[i]);
+	}
+
+	return NULL;
 }
 
 void *startGame(GAMESPEC g)
@@ -73,7 +101,31 @@ void *startGame(GAMESPEC g)
 		TextToSpeech_speak(requestedInput);
 
 		int timeTaken;
-		int actualInput = InputManager_waitForInput(&timeTaken);
+		int actualInput;
+
+		if(requestedInput == BUTTON_SEQUENCE)
+		{
+			pthread_t ledFlashingThreadID;
+			pthread_create(&ledFlashingThreadID, NULL, &flashLEDS, NULL);
+
+			//call InputManager or whatev to check button presses
+			if(InputManager_readButtonSequence(&timeTaken, ledFlashes, ledFlashCount))
+			{
+				actualInput = BUTTON_SEQUENCE;
+			}
+			else
+			{
+				actualInput = -1;
+			}
+
+			pthread_join(ledFlashingThreadID, NULL);
+			free(ledFlashes);
+		}
+		else
+		{
+			actualInput = InputManager_waitForInput(&timeTaken);
+		}
+
 		int totalIterations = playerStats.score + playerStats.wrongInputCount + playerStats.missCount + 1;
 		playerStats.averageInputTime = (playerStats.averageInputTime * (totalIterations - 1) / totalIterations) + (timeTaken / totalIterations);
 

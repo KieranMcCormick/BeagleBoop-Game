@@ -2,6 +2,8 @@
 // Created by jamie on 15/10/17.
 //
 
+#include "LED.h"
+
 #ifndef INPUTMANAGER_INPUTMANAGER_H
 #define INPUTMANAGER_INPUTMANAGER_H
 
@@ -29,5 +31,7 @@ void InputManager_cleanup(void);
 char* InputManager_getInputString(Input input);
 
 Input InputManager_waitForInput(int* inputTimeMilliseconds);
+
+int InputManager_readButtonSequence(int* inputTimeMilliseconds, LED *ledFlashes, int ledFlashCount);
 
 #endif /* INPUTMANAGER_H */

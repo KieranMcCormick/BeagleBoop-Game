@@ -6,6 +6,7 @@
 #include "Potentiometer.h"
 #include "Accelerometer.h"
 #include "InputManager.h"
+#include "Buttons.h"
 #include <sys/time.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -114,4 +115,34 @@ static Input getAccelerometerInput(Acceleration initialOrientation, Acceleration
         return ACCELEROMETER_PITCH_UP;
     }
     return NO_INPUT;
+}
+
+int InputManager_readButtonSequence(int* inputTimeMilliseconds, LED *ledFlashes, int ledFlashCount)
+{
+	struct timeval startTime;
+	struct timeval currentTime;
+	gettimeofday(&startTime, NULL);
+
+	int millisecondsSinceStart = 0;
+
+	for(int i = 0;i < ledFlashCount && millisecondsSinceStart < timeoutInMilliseconds;i++)
+	{
+		int button;
+		do
+		{
+			button = Buttons_getButton();
+			gettimeofday(&currentTime, NULL);
+			millisecondsSinceStart = (currentTime.tv_sec - startTime.tv_sec) * (MILLISECONDS_PER_SECOND);
+			millisecondsSinceStart += (currentTime.tv_usec - startTime.tv_usec) / (MICROSECONDS_PER_MILLISECOND);
+			*inputTimeMilliseconds = millisecondsSinceStart;
+		}
+		while(button == -1 && millisecondsSinceStart < timeoutInMilliseconds);
+
+		if(button != ledFlashes[i])
+		{
+			return 0;
+		}
+	}
+
+	return 1;
 }
