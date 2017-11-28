@@ -1,7 +1,0 @@
-find_package( Threads )
-add_executable(game main.c)
-target_link_libraries(game model)
-target_link_libraries(game ${CMAKE_THREAD_LIBS_INIT} )
-add_library(testlib SHARED IMPORTED)
-set_property(TARGET testlib PROPERTY IMPORTED_LOCATION "/home/octavian13/cmpt433/public/asound_lib_BBB/lasound.so")
-target_link_libraries(game testlib)
