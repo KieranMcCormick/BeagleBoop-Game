@@ -125,9 +125,14 @@ int InputManager_readButtonSequence(int* inputTimeMilliseconds, LED *ledFlashes,
 
 	int millisecondsSinceStart = 0;
 
+	printf("LED flash count: %d\n", ledFlashCount);
+
 	for(int i = 0;i < ledFlashCount && millisecondsSinceStart < timeoutInMilliseconds;i++)
 	{
+		printf("LED flash expected: %d\n", ledFlashes[i]);
+
 		int button;
+
 		do
 		{
 			button = Buttons_getButton();
@@ -135,8 +140,28 @@ int InputManager_readButtonSequence(int* inputTimeMilliseconds, LED *ledFlashes,
 			millisecondsSinceStart = (currentTime.tv_sec - startTime.tv_sec) * (MILLISECONDS_PER_SECOND);
 			millisecondsSinceStart += (currentTime.tv_usec - startTime.tv_usec) / (MICROSECONDS_PER_MILLISECOND);
 			*inputTimeMilliseconds = millisecondsSinceStart;
+
+			if(millisecondsSinceStart >= timeoutInMilliseconds)
+			{
+				return 0;
+			}
 		}
-		while(button == -1 && millisecondsSinceStart < timeoutInMilliseconds);
+		while(button != -1);
+
+		do
+		{
+			button = Buttons_getButton();
+			gettimeofday(&currentTime, NULL);
+			millisecondsSinceStart = (currentTime.tv_sec - startTime.tv_sec) * (MILLISECONDS_PER_SECOND);
+			millisecondsSinceStart += (currentTime.tv_usec - startTime.tv_usec) / (MICROSECONDS_PER_MILLISECOND);
+			*inputTimeMilliseconds = millisecondsSinceStart;
+
+			if(millisecondsSinceStart >= timeoutInMilliseconds)
+			{
+				return 0;
+			}
+		}
+		while(button == -1);
 
 		if(button != ledFlashes[i])
 		{

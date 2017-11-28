@@ -12,7 +12,7 @@ int main()
 	LED_init();
 	Buttons_init();
 
-	GAMESPEC gameSettings = getNewGameSpec("test");
+	GAMESPEC gameSettings = getNewButtonsGameSpec("test");
 	startGame(gameSettings);
 
 	TextToSpeech_cleanup();
