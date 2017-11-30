@@ -12,8 +12,9 @@ int main()
 	LED_init();
 	Buttons_init();
 
-	GAMESPEC gameSettings = getNewButtonsGameSpec("test");
-	startGame(gameSettings);
+	/* 	GAMESPEC gameSettings = getNewButtonsGameSpec("test");
+	startGame(gameSettings); */
+	runNetGame();
 
 	TextToSpeech_cleanup();
 	endSegDisplay();

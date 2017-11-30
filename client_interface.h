@@ -18,8 +18,7 @@ typedef struct
 	int score;
 } STATS;
 
-GAMESPEC getNewDefaultGameSpec(char *playerName);
-GAMESPEC getNewButtonsGameSpec(char *playerName);
+void runNetGame();
 void reportPlayerStats(STATS playerStats);
 
 #endif

@@ -1,0 +1,7 @@
+{
+    "files.associations": {
+        "game_core.h": "c",
+        "stdbool.h": "c",
+        "client_interface.h": "c"
+    }
+}

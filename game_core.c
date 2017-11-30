@@ -17,7 +17,7 @@ static char *gameOverMessage;
 static GAMESPEC gameSpec;
 static STATS playerStats;
 
-static char *playerName;
+//static char *playerName;
 
 static struct timespec delay = {2l, 0l};
 
@@ -26,9 +26,9 @@ static int ledFlashCount;
 
 static int blacklistContains(int input)
 {
-	for(int i = 0;i < gameSpec.inputBlacklistSize;i++)
+	for (int i = 0; i < gameSpec.inputBlacklistSize; i++)
 	{
-		if(gameSpec.inputBlacklist[i] == input)
+		if (gameSpec.inputBlacklist[i] == input)
 		{
 			return 1;
 		}
@@ -41,9 +41,9 @@ static int getNextInput()
 	int validInputs[NUMBER_OF_INPUTS];
 
 	int j = 0;
-	for(int i = 0;i < NUMBER_OF_INPUTS;i++)
+	for (int i = 0; i < NUMBER_OF_INPUTS; i++)
 	{
-		if(!blacklistContains(i))
+		if (!blacklistContains(i))
 		{
 			validInputs[j] = i;
 			j++;
@@ -52,23 +52,23 @@ static int getNextInput()
 
 	int nextInput = validInputs[rand() % (NUMBER_OF_INPUTS - gameSpec.inputBlacklistSize)];
 
-	if(nextInput == BUTTON_SEQUENCE)
+	if (nextInput == BUTTON_SEQUENCE)
 	{
 		ledFlashCount = (rand() % 4) + 2;
 		ledFlashes = malloc(sizeof(LED) * ledFlashCount);
 
-		for(int i = 0;i < ledFlashCount;i++)
+		for (int i = 0; i < ledFlashCount; i++)
 		{
 			ledFlashes[i] = rand() % NUMBER_OF_LEDS;
 		}
 	}
-	
+
 	return nextInput;
 }
 
 void *flashLEDS()
 {
-	for(int i = 0;i < ledFlashCount;i++)
+	for (int i = 0; i < ledFlashCount; i++)
 	{
 		LED_flashLED(ledFlashes[i]);
 	}
@@ -80,9 +80,9 @@ void *startGame(GAMESPEC g)
 {
 	gameOver = 0;
 
-	printf("Enter your name: ");
+	/* 	printf("Enter your name: ");
 	scanf("%s", playerName);
-	printf("Starting game!\n");
+	printf("Starting game!\n"); */
 
 	gameSpec = g;
 	srand(gameSpec.sequenceSeed);
@@ -94,7 +94,7 @@ void *startGame(GAMESPEC g)
 	playerStats.averageInputTime = gameSpec.inputTime;
 	playerStats.score = 0;
 
-	while(!gameOver)
+	while (!gameOver)
 	{
 		int requestedInput = getNextInput();
 		printf("%s!\n", InputManager_getInputString(requestedInput));
@@ -103,13 +103,13 @@ void *startGame(GAMESPEC g)
 		int timeTaken;
 		int actualInput;
 
-		if(requestedInput == BUTTON_SEQUENCE)
+		if (requestedInput == BUTTON_SEQUENCE)
 		{
 			pthread_t ledFlashingThreadID;
 			pthread_create(&ledFlashingThreadID, NULL, &flashLEDS, NULL);
 
 			//call InputManager or whatev to check button presses
-			if(InputManager_readButtonSequence(&timeTaken, ledFlashes, ledFlashCount))
+			if (InputManager_readButtonSequence(&timeTaken, ledFlashes, ledFlashCount))
 			{
 				actualInput = BUTTON_SEQUENCE;
 			}
@@ -129,9 +129,9 @@ void *startGame(GAMESPEC g)
 		int totalIterations = playerStats.score + playerStats.wrongInputCount + playerStats.missCount + 1;
 		playerStats.averageInputTime = (playerStats.averageInputTime * (totalIterations - 1) / totalIterations) + (timeTaken / totalIterations);
 
-		if(actualInput != requestedInput)
+		if (actualInput != requestedInput)
 		{
-			if(actualInput == NO_INPUT)
+			if (actualInput == NO_INPUT)
 			{
 				playerStats.missCount++;
 			}
@@ -141,11 +141,11 @@ void *startGame(GAMESPEC g)
 			}
 
 			int livesLeft = gameSpec.lives - (playerStats.wrongInputCount + playerStats.missCount);
-			if(livesLeft <= 0)
+			if (livesLeft <= 0)
 			{
 				endGame("No lives left!");
 			}
-			else if(livesLeft == 1)
+			else if (livesLeft == 1)
 			{
 				printf("Woops! 1 life left!\n");
 			}
@@ -159,9 +159,9 @@ void *startGame(GAMESPEC g)
 			playerStats.score++;
 			displayNumber(playerStats.score);
 		}
-		reportPlayerStats(playerStats);
-		nanosleep(&delay, (struct timespec*) NULL);
+		nanosleep(&delay, (struct timespec *)NULL);
 	}
+	reportPlayerStats(playerStats);
 
 	printf("Game Over!\n%s\n", gameOverMessage);
 	free(gameOverMessage);
