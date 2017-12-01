@@ -111,6 +111,7 @@ static char *curlGet()
 #endif
 
 		res = curl_easy_perform(curl);
+		free(url);
 		if (res != CURLE_OK)
 		{
 			fprintf(stderr, "curl_easy_perform() failed: %s\n",
@@ -220,7 +221,10 @@ static void getUser()
 		/* do stuff */
 	}
 	fclose(fh);
-	currentUser = buffer;
+	currentUser = malloc(sizeof(buffer) * sizeof(char));
+	strcpy(currentUser, buffer);
+
+	//currentUser = buffer;
 }
 
 void runNetGame()
@@ -338,6 +342,7 @@ static void curlPutResults(const char *message)
 		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, message); /* data goes here */
 
 		res = curl_easy_perform(curl);
+		free(url);
 		if (res != CURLE_OK)
 		{
 			fprintf(stderr, "curl_easy_perform() failed: %s\n",
