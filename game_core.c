@@ -161,6 +161,7 @@ void *startGame(GAMESPEC g)
 		}
 		nanosleep(&delay, (struct timespec *)NULL);
 	}
+
 	reportPlayerStats(playerStats);
 
 	printf("Game Over!\n%s\n", gameOverMessage);

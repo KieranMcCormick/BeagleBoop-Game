@@ -51,9 +51,9 @@ static void curlPutAlert()
 	{
 		headers = curl_slist_append(headers, "Content-Type: application/json");
 
-		char *url = malloc((sizeof("https://beagle-boop.firebaseio.com/boards/") + sizeof(currentUser) + sizeof(".json")) * sizeof(char));
+		char *url = malloc((strlen("https://beagle-boop.firebaseio.com/boards/") + strlen(currentUser) + strlen(".json") + 1) * sizeof(char));
 		strcpy(url, "https://beagle-boop.firebaseio.com/boards/");
-		strcat(strcat(url, currentUser), ".json");
+		strcat(strcat(url, currentUser), "/alert.json");
 
 		curl_easy_setopt(curl, CURLOPT_URL, url);
 		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
@@ -88,7 +88,7 @@ static char *curlGet()
 	curl = curl_easy_init();
 	if (curl)
 	{
-		char *url = malloc((sizeof("https://beagle-boop.firebaseio.com/boards/") + sizeof(currentUser) + sizeof(".json")) * sizeof(char));
+		char *url = malloc((strlen("https://beagle-boop.firebaseio.com/boards/") + strlen(currentUser) + strlen(".json") + 1) * sizeof(char));
 		strcpy(url, "https://beagle-boop.firebaseio.com/boards/");
 		strcat(strcat(url, currentUser), ".json");
 
@@ -145,13 +145,9 @@ static bool checkGameStart()
 	curl = curl_easy_init();
 	if (curl)
 	{
-
-		printf("1currentUser: %s\n", currentUser);
-
-		char *url = malloc((sizeof("https://beagle-boop.firebaseio.com/boards/") + sizeof(currentUser) + sizeof(".json")) * sizeof(char));
+		char *url = malloc((strlen("https://beagle-boop.firebaseio.com/boards/") + strlen(currentUser) + strlen(".json") + 1) * sizeof(char));
 		strcpy(url, "https://beagle-boop.firebaseio.com/boards/");
 		strcat(strcat(url, currentUser), "/alert.json");
-		printf("url: %s\n", url);
 		curl_easy_setopt(curl, CURLOPT_URL, url);
 
 		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
@@ -179,7 +175,6 @@ static bool checkGameStart()
 		}
 		else
 		{
-			printf("retrieved: %s\n", chunk.memory);
 		}
 
 		curl_easy_cleanup(curl);
@@ -221,7 +216,7 @@ static void getUser()
 		/* do stuff */
 	}
 	fclose(fh);
-	currentUser = malloc(sizeof(buffer) * sizeof(char));
+	currentUser = malloc((strlen(buffer) + 1) * sizeof(char));
 	strcpy(currentUser, buffer);
 
 	//currentUser = buffer;
@@ -234,12 +229,12 @@ void runNetGame()
 	tim.tv_nsec = 500000000L;
 	getUser();
 
-	printf("currentUser: %s\n", currentUser);
-
 	while (gameRunning)
 	{
 		if (checkGameStart())
 		{
+			printf("checkGameStart\n");
+
 			struct json_object *jobj;
 
 			jobj = json_tokener_parse(curlGet());
@@ -256,6 +251,7 @@ void runNetGame()
 			json_object *blacklist = json_object_object_get(jobj, "blacklist");
 
 			newGameSpec.inputBlacklistSize = json_object_array_length(blacklist);
+			printf("inputBlacklistSize\n");
 
 			newGameSpec.inputBlacklist = malloc(sizeof(int) * newGameSpec.inputBlacklistSize);
 			for (int i = 0; i < newGameSpec.inputBlacklistSize; i++)
@@ -308,9 +304,12 @@ void runNetGame()
 					newGameSpec.inputBlacklist[i] = BUTTON_SEQUENCE;
 				}
 			}
+			printf("startGame\n");
 			startGame(newGameSpec);
 			curlPutAlert();
+
 			free(newGameSpec.inputBlacklist);
+
 			nanosleep(&tim, &tim2);
 		}
 		else
@@ -318,6 +317,7 @@ void runNetGame()
 			nanosleep(&tim, &tim2);
 		}
 	}
+	free(currentUser);
 }
 
 static void curlPutResults(const char *message)
@@ -332,7 +332,7 @@ static void curlPutResults(const char *message)
 	{
 		headers = curl_slist_append(headers, "Content-Type: application/json");
 
-		char *url = malloc((sizeof("https://beagle-boop.firebaseio.com/boards/") + sizeof(currentUser) + sizeof(".json")) * sizeof(char));
+		char *url = malloc((strlen("https://beagle-boop.firebaseio.com/boards/") + strlen(currentUser) + strlen("/results.json") + 1) * sizeof(char));
 		strcpy(url, "https://beagle-boop.firebaseio.com/boards/");
 		strcat(strcat(url, currentUser), "/results.json");
 
