@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <time.h>
 
 #include <curl/curl.h>
 #include <json/json.h>
@@ -28,7 +29,6 @@ WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
 	mem->memory = realloc(mem->memory, mem->size + realsize + 1);
 	if (mem->memory == NULL)
 	{
-		printf("not enough memory (realloc returned NULL)\n");
 		return 0;
 	}
 
@@ -39,73 +39,156 @@ WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp)
 	return realsize;
 }
 
-void runNetGame()
+static void curlPutAlert()
 {
-	while (gameRunning)
+	CURL *curl;
+	CURLcode res;
+	struct curl_slist *headers = NULL;
+
+	curl = curl_easy_init();
+
+	if (curl)
 	{
+		headers = curl_slist_append(headers, "Content-Type: application/json");
 
-		CURL *curl;
-		CURLcode res;
+		curl_easy_setopt(curl, CURLOPT_URL, "https://beagle-boop.firebaseio.com/boards/eddie/alert.json");
+		curl_easy_setopt(curl, CURLOPT_CUSTOMREQUEST, "PUT");
 
-		struct MemoryStruct chunk;
+		curl_easy_setopt(curl, CURLOPT_POSTFIELDS, "false"); /* data goes here */
 
-		chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
-		chunk.size = 0;			  /* no data at this point */
-
-		curl_global_init(CURL_GLOBAL_DEFAULT);
-
-		curl = curl_easy_init();
-		if (curl)
+		res = curl_easy_perform(curl);
+		if (res != CURLE_OK)
 		{
-			curl_easy_setopt(curl, CURLOPT_URL, "https://beagle-boop.firebaseio.com/boards/eddie.json");
+			fprintf(stderr, "curl_easy_perform() failed: %s\n",
+					curl_easy_strerror(res));
+		}
+		curl_easy_cleanup(curl);
+	}
+}
 
-			curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+static char *curlGet()
+{
+	CURL *curl;
+	CURLcode res;
 
-			curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+	struct MemoryStruct chunk;
 
-			curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+	chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+	chunk.size = 0;			  /* no data at this point */
+
+	curl_global_init(CURL_GLOBAL_DEFAULT);
+
+	curl = curl_easy_init();
+	if (curl)
+	{
+		curl_easy_setopt(curl, CURLOPT_URL, "https://beagle-boop.firebaseio.com/boards/eddie.json");
+
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
 
 #ifdef SKIP_PEER_VERIFICATION
 
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
 #endif
 
 #ifdef SKIP_HOSTNAME_VERIFICATION
 
-			curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
 #endif
 
-			res = curl_easy_perform(curl);
-			if (res != CURLE_OK)
-			{
-				fprintf(stderr, "curl_easy_perform() failed: %s\n",
-						curl_easy_strerror(res));
-			}
-			else
-			{
-				//printf("%lu bytes retrieved\n", (long)chunk.size);
-				//printf("recieved: %s \n", chunk.memory);
-			}
-
-			curl_easy_cleanup(curl);
-		}
-		char *str = chunk.memory;
-		free(chunk.memory);
-
-		curl_global_cleanup();
-
-		struct json_object *jobj;
-
-		jobj = json_tokener_parse(str);
-
-		json_object *obj_alert = json_object_object_get(jobj, "alert");
-		GAMESPEC newGameSpec;
-
-		if (json_object_get_boolean(obj_alert))
+		res = curl_easy_perform(curl);
+		if (res != CURLE_OK)
 		{
+			fprintf(stderr, "curl_easy_perform() failed: %s\n",
+					curl_easy_strerror(res));
+		}
+		else
+		{
+		}
+
+		curl_easy_cleanup(curl);
+	}
+	char *str = chunk.memory;
+	free(chunk.memory);
+
+	curl_global_cleanup();
+	return str;
+}
+
+static bool checkGameStart()
+{
+	CURL *curl;
+	CURLcode res;
+	bool ret = false;
+	struct MemoryStruct chunk;
+
+	chunk.memory = malloc(1); /* will be grown as needed by the realloc above */
+	chunk.size = 0;			  /* no data at this point */
+
+	curl_global_init(CURL_GLOBAL_DEFAULT);
+
+	curl = curl_easy_init();
+	if (curl)
+	{
+		curl_easy_setopt(curl, CURLOPT_URL, "https://beagle-boop.firebaseio.com/boards/eddie/alert.json");
+
+		curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+
+		curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&chunk);
+
+		curl_easy_setopt(curl, CURLOPT_USERAGENT, "libcurl-agent/1.0");
+
+#ifdef SKIP_PEER_VERIFICATION
+
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+#endif
+
+#ifdef SKIP_HOSTNAME_VERIFICATION
+
+		curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+#endif
+
+		res = curl_easy_perform(curl);
+		if (res != CURLE_OK)
+		{
+			fprintf(stderr, "curl_easy_perform() failed: %s\n",
+					curl_easy_strerror(res));
+		}
+		else
+		{
+		}
+
+		curl_easy_cleanup(curl);
+	}
+	if (strcmp(chunk.memory, "true") == 0)
+	{
+		ret = true;
+	}
+	free(chunk.memory);
+
+	curl_global_cleanup();
+	return ret;
+}
+
+void runNetGame()
+{
+	struct timespec tim, tim2;
+	tim.tv_sec = 0;
+	tim.tv_nsec = 500000000L;
+	while (gameRunning)
+	{
+		if (checkGameStart())
+		{
+			struct json_object *jobj;
+
+			jobj = json_tokener_parse(curlGet());
+			GAMESPEC newGameSpec;
+
 			json_object *inputTime = json_object_object_get(jobj, "timeToAnswer");
 			newGameSpec.inputTime = (json_object_get_int(inputTime) * 1000);
-
 			json_object *obj_lives = json_object_object_get(jobj, "lives");
 			newGameSpec.lives = json_object_get_int(obj_lives);
 
@@ -168,6 +251,13 @@ void runNetGame()
 				}
 			}
 			startGame(newGameSpec);
+			curlPutAlert();
+			free(newGameSpec.inputBlacklist);
+			nanosleep(&tim, &tim2);
+		}
+		else
+		{
+			nanosleep(&tim, &tim2);
 		}
 	}
 }
@@ -201,7 +291,6 @@ static void curlPutResults(const char *message)
 
 void reportPlayerStats(STATS playerStats)
 {
-	printf("Misses: %d, Incorrect: %d, Average Input Time: %f ms, score: %d\n", playerStats.missCount, playerStats.wrongInputCount, playerStats.averageInputTime, playerStats.score);
 
 	json_object *jobj = json_object_new_object();
 
@@ -216,6 +305,9 @@ void reportPlayerStats(STATS playerStats)
 
 	json_object *score = json_object_new_int(playerStats.score);
 	json_object_object_add(jobj, "score", score);
+
+	json_object *gameFinished = json_object_new_string("true");
+	json_object_object_add(jobj, "gameFinished", gameFinished);
 
 	curlPutResults(json_object_to_json_string_ext(jobj, JSON_C_TO_STRING_PLAIN));
 }
