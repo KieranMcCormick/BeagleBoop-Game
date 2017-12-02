@@ -307,6 +307,7 @@ void runNetGame()
 			else
 			{
 				newGameSpec.inputBlacklistSize = 0;
+				newGameSpec.inputBlacklist = malloc(sizeof(int) * newGameSpec.inputBlacklistSize);
 			}
 			startGame(newGameSpec);
 			curlPutAlert();
