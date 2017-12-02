@@ -233,8 +233,6 @@ void runNetGame()
 	{
 		if (checkGameStart())
 		{
-			printf("checkGameStart\n");
-
 			struct json_object *jobj;
 
 			jobj = json_tokener_parse(curlGet());
@@ -252,9 +250,7 @@ void runNetGame()
 
 			if (blacklist)
 			{
-				printf("blacklist was true\n");
 				newGameSpec.inputBlacklistSize = json_object_array_length(blacklist);
-				printf("inputBlacklistSize\n");
 
 				newGameSpec.inputBlacklist = malloc(sizeof(int) * newGameSpec.inputBlacklistSize);
 				for (int i = 0; i < newGameSpec.inputBlacklistSize; i++)
@@ -310,11 +306,8 @@ void runNetGame()
 			}
 			else
 			{
-				printf("blacklist was false\n");
-
 				newGameSpec.inputBlacklistSize = 0;
 			}
-			printf("startGame\n");
 			startGame(newGameSpec);
 			curlPutAlert();
 
