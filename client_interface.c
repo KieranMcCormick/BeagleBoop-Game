@@ -250,59 +250,69 @@ void runNetGame()
 
 			json_object *blacklist = json_object_object_get(jobj, "blacklist");
 
-			newGameSpec.inputBlacklistSize = json_object_array_length(blacklist);
-			printf("inputBlacklistSize\n");
-
-			newGameSpec.inputBlacklist = malloc(sizeof(int) * newGameSpec.inputBlacklistSize);
-			for (int i = 0; i < newGameSpec.inputBlacklistSize; i++)
+			if (blacklist)
 			{
-				json_object *arrayObj = json_object_array_get_idx(blacklist, i);
-				const char *arrayObjVal = json_object_get_string(arrayObj);
+				printf("blacklist was true\n");
+				newGameSpec.inputBlacklistSize = json_object_array_length(blacklist);
+				printf("inputBlacklistSize\n");
 
-				if (strcmp(arrayObjVal, "JOYSTICK_UP") == 0)
+				newGameSpec.inputBlacklist = malloc(sizeof(int) * newGameSpec.inputBlacklistSize);
+				for (int i = 0; i < newGameSpec.inputBlacklistSize; i++)
 				{
-					newGameSpec.inputBlacklist[i] = JOYSTICK_UP;
+					json_object *arrayObj = json_object_array_get_idx(blacklist, i);
+					const char *arrayObjVal = json_object_get_string(arrayObj);
+
+					if (strcmp(arrayObjVal, "JOYSTICK_UP") == 0)
+					{
+						newGameSpec.inputBlacklist[i] = JOYSTICK_UP;
+					}
+					else if (strcmp(arrayObjVal, "JOYSTICK_DOWN") == 0)
+					{
+						newGameSpec.inputBlacklist[i] = JOYSTICK_DOWN;
+					}
+					else if (strcmp(arrayObjVal, "JOYSTICK_LEFT") == 0)
+					{
+						newGameSpec.inputBlacklist[i] = JOYSTICK_LEFT;
+					}
+					else if (strcmp(arrayObjVal, "JOYSTICK_RIGHT") == 0)
+					{
+						newGameSpec.inputBlacklist[i] = JOYSTICK_RIGHT;
+					}
+					else if (strcmp(arrayObjVal, "JOYSTICK_CENTER") == 0)
+					{
+						newGameSpec.inputBlacklist[i] = JOYSTICK_CENTER;
+					}
+					else if (strcmp(arrayObjVal, "ACCELEROMETER_TILT_LEFT") == 0)
+					{
+						newGameSpec.inputBlacklist[i] = ACCELEROMETER_TILT_LEFT;
+					}
+					else if (strcmp(arrayObjVal, "ACCELEROMETER_TILT_RIGHT") == 0)
+					{
+						newGameSpec.inputBlacklist[i] = ACCELEROMETER_TILT_RIGHT;
+					}
+					else if (strcmp(arrayObjVal, "ACCELEROMETER_PITCH_UP") == 0)
+					{
+						newGameSpec.inputBlacklist[i] = ACCELEROMETER_PITCH_UP;
+					}
+					else if (strcmp(arrayObjVal, "ACCELEROMETER_PITCH_DOWN") == 0)
+					{
+						newGameSpec.inputBlacklist[i] = ACCELEROMETER_PITCH_DOWN;
+					}
+					else if (strcmp(arrayObjVal, "POTENTIOMETER_TURN") == 0)
+					{
+						newGameSpec.inputBlacklist[i] = POTENTIOMETER_TURN;
+					}
+					else if (strcmp(arrayObjVal, "BUTTON_SEQUENCE") == 0)
+					{
+						newGameSpec.inputBlacklist[i] = BUTTON_SEQUENCE;
+					}
 				}
-				else if (strcmp(arrayObjVal, "JOYSTICK_DOWN") == 0)
-				{
-					newGameSpec.inputBlacklist[i] = JOYSTICK_DOWN;
-				}
-				else if (strcmp(arrayObjVal, "JOYSTICK_LEFT") == 0)
-				{
-					newGameSpec.inputBlacklist[i] = JOYSTICK_LEFT;
-				}
-				else if (strcmp(arrayObjVal, "JOYSTICK_RIGHT") == 0)
-				{
-					newGameSpec.inputBlacklist[i] = JOYSTICK_RIGHT;
-				}
-				else if (strcmp(arrayObjVal, "JOYSTICK_CENTER") == 0)
-				{
-					newGameSpec.inputBlacklist[i] = JOYSTICK_CENTER;
-				}
-				else if (strcmp(arrayObjVal, "ACCELEROMETER_TILT_LEFT") == 0)
-				{
-					newGameSpec.inputBlacklist[i] = ACCELEROMETER_TILT_LEFT;
-				}
-				else if (strcmp(arrayObjVal, "ACCELEROMETER_TILT_RIGHT") == 0)
-				{
-					newGameSpec.inputBlacklist[i] = ACCELEROMETER_TILT_RIGHT;
-				}
-				else if (strcmp(arrayObjVal, "ACCELEROMETER_PITCH_UP") == 0)
-				{
-					newGameSpec.inputBlacklist[i] = ACCELEROMETER_PITCH_UP;
-				}
-				else if (strcmp(arrayObjVal, "ACCELEROMETER_PITCH_DOWN") == 0)
-				{
-					newGameSpec.inputBlacklist[i] = ACCELEROMETER_PITCH_DOWN;
-				}
-				else if (strcmp(arrayObjVal, "POTENTIOMETER_TURN") == 0)
-				{
-					newGameSpec.inputBlacklist[i] = POTENTIOMETER_TURN;
-				}
-				else if (strcmp(arrayObjVal, "BUTTON_SEQUENCE") == 0)
-				{
-					newGameSpec.inputBlacklist[i] = BUTTON_SEQUENCE;
-				}
+			}
+			else
+			{
+				printf("blacklist was false\n");
+
+				newGameSpec.inputBlacklistSize = 0;
 			}
 			printf("startGame\n");
 			startGame(newGameSpec);
