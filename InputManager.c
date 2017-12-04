@@ -15,10 +15,10 @@
 #define POTENTIOMETER_THRESHOLD 250
 #define MILLISECONDS_PER_SECOND 1000
 #define MICROSECONDS_PER_MILLISECOND 1000
-#define EXTRA_TIME_FOR_BUTTONS 2000
+#define EXTRA_TIME_FOR_BUTTON 400
+#define EXTRA_TIME_FOR_VOICE 750
 
 static int timeoutInMilliseconds;
-static int buttonTimeoutInMilliseconds;
 
 static Input getJoystickInput(Direction joystickInput);
 static Input getAccelerometerInput(Acceleration initialOrientation, Acceleration currentOrientation);
@@ -26,8 +26,7 @@ static char* inputStrings[NUMBER_OF_INPUTS];
 
 void InputManager_init(int specifiedTimeoutInMilliseconds)
 {
-    timeoutInMilliseconds = specifiedTimeoutInMilliseconds;
-    buttonTimeoutInMilliseconds = timeoutInMilliseconds + EXTRA_TIME_FOR_BUTTONS;	
+    timeoutInMilliseconds = specifiedTimeoutInMilliseconds + (EXTRA_TIME_FOR_VOICE);	
     Joystick_init();
     Potentiometer_init();
     Accelerometer_init();
@@ -127,6 +126,7 @@ int InputManager_readButtonSequence(int* inputTimeMilliseconds, LED *ledFlashes,
 	gettimeofday(&startTime, NULL);
 
 	int millisecondsSinceStart = 0;
+	int buttonTimeoutInMilliseconds = timeoutInMilliseconds + (ledFlashCount * (EXTRA_TIME_FOR_BUTTON));
 
 	printf("LED flash count: %d\n", ledFlashCount);
 
@@ -171,6 +171,6 @@ int InputManager_readButtonSequence(int* inputTimeMilliseconds, LED *ledFlashes,
 			return 0;
 		}
 	}
-
+	
 	return 1;
 }
