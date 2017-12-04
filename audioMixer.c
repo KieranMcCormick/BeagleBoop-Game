@@ -90,7 +90,7 @@ void AudioMixer_readWaveFileIntoMemory(char *fileName, wavedata_t *pSound)
 	// The PCM data in a wave file starts after the header:
 	const int PCM_DATA_OFFSET = 44;
 
-	char *filePath = "audio/%s.wav";
+	char *filePath = "/root/audio/%s.wav";
 	char *fullFileName = malloc((strlen(filePath) + strlen(fileName)) * sizeof(char));
 	sprintf(fullFileName, filePath, fileName);
 

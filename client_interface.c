@@ -198,7 +198,7 @@ static void getUser()
 	FILE *fh;
 	int line;
 
-	if (!(fh = fopen("name.txt", "r")))
+	if (!(fh = fopen("/root/name.txt", "r")))
 	{
 		printf("Failure to open file:  %s\n", "name.txt");
 		exit(0);
