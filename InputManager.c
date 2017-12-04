@@ -15,6 +15,8 @@
 #define POTENTIOMETER_THRESHOLD 250
 #define MILLISECONDS_PER_SECOND 1000
 #define MICROSECONDS_PER_MILLISECOND 1000
+#define EXTRA_TIME_FOR_BUTTON 400
+#define EXTRA_TIME_FOR_VOICE 750
 
 static int timeoutInMilliseconds;
 
@@ -24,7 +26,7 @@ static char* inputStrings[NUMBER_OF_INPUTS];
 
 void InputManager_init(int specifiedTimeoutInMilliseconds)
 {
-    timeoutInMilliseconds = specifiedTimeoutInMilliseconds;
+    timeoutInMilliseconds = specifiedTimeoutInMilliseconds + (EXTRA_TIME_FOR_VOICE);	
     Joystick_init();
     Potentiometer_init();
     Accelerometer_init();
@@ -124,10 +126,11 @@ int InputManager_readButtonSequence(int* inputTimeMilliseconds, LED *ledFlashes,
 	gettimeofday(&startTime, NULL);
 
 	int millisecondsSinceStart = 0;
+	int buttonTimeoutInMilliseconds = timeoutInMilliseconds + (ledFlashCount * (EXTRA_TIME_FOR_BUTTON));
 
 	printf("LED flash count: %d\n", ledFlashCount);
 
-	for(int i = 0;i < ledFlashCount && millisecondsSinceStart < timeoutInMilliseconds;i++)
+	for(int i = 0;i < ledFlashCount && millisecondsSinceStart < buttonTimeoutInMilliseconds;i++)
 	{
 		printf("LED flash expected: %d\n", ledFlashes[i]);
 
@@ -141,7 +144,7 @@ int InputManager_readButtonSequence(int* inputTimeMilliseconds, LED *ledFlashes,
 			millisecondsSinceStart += (currentTime.tv_usec - startTime.tv_usec) / (MICROSECONDS_PER_MILLISECOND);
 			*inputTimeMilliseconds = millisecondsSinceStart;
 
-			if(millisecondsSinceStart >= timeoutInMilliseconds)
+			if(millisecondsSinceStart >= buttonTimeoutInMilliseconds)
 			{
 				return 0;
 			}
@@ -156,7 +159,7 @@ int InputManager_readButtonSequence(int* inputTimeMilliseconds, LED *ledFlashes,
 			millisecondsSinceStart += (currentTime.tv_usec - startTime.tv_usec) / (MICROSECONDS_PER_MILLISECOND);
 			*inputTimeMilliseconds = millisecondsSinceStart;
 
-			if(millisecondsSinceStart >= timeoutInMilliseconds)
+			if(millisecondsSinceStart >= buttonTimeoutInMilliseconds)
 			{
 				return 0;
 			}
@@ -168,6 +171,6 @@ int InputManager_readButtonSequence(int* inputTimeMilliseconds, LED *ledFlashes,
 			return 0;
 		}
 	}
-
+	
 	return 1;
 }
