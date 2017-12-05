@@ -1,13 +1,10 @@
-Starting the game automatically on boot:
+- note - The latest version can only be ran from root directory
 
-1. Pull latest version of project from master
- - note - The latest version can only be ran from root directory
+1. Build project to your public folder
 
-2. Build project to your public folder
+2. Copy gameTest, audio folder, and name.txt config file to ~/
 
-3. Copy gameTest, audio folder, and name.txt config file to ~/
-
-4. Make the service shell script:
+3. Make the service shell script:
 cd ~/
 nano beagleboop.sh
 
@@ -21,7 +18,7 @@ save and exit nano
 
 chmod +x beagleboop.sh
 
-5. Setup the service to run your shell script
+4. Setup the service to run your shell script
 cd /lib/systemd/system
 nano beagleboop.service
 
@@ -40,5 +37,5 @@ WantedBy=multi-user.target
 
 save and exit nano
 
-6. Enable service on boot
+5. Enable service on boot
 systemctl enable beagleboop.service
