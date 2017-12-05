@@ -1,13 +1,15 @@
 - note - The latest version can only be ran from root directory
 
-1. Build project to your public folder by running 
+<span>1</span>. Build the project on your host to your public folder by running 
 
-`# make`
+`$ make`
 
-2. Copy the executable `gameTest`, audio folder `audio`, and config file `name.txt` to the targets ~/
+<span>2</span>. The game is now available to the target via `# mnt/remote/myApps`. 
+
+From `# mnt/remote/myApps` copy the executable `gameTest`, audio folder `audio`, and config file `name.txt` to the targets root `~/`
 
 
-3. Make the service shell script:
+<span>3</span>. To make the service shell script:
 
 `# cd ~/`
 
@@ -44,6 +46,11 @@ WantedBy=multi-user.target
 
 save and exit nano
 
-<span>5</span>. Enable service on boot
+<span>5</span>. To enable the service on boot
 
 `systemctl enable beagleboop.service`
+
+Once your service is running, and if you have not changed the `name.txt` config file, you can start the game from the web page by selecting the board `Eddie` and pressing the update button.
+
+https://beagle-boop.github.io/
+
