@@ -9,3 +9,4 @@ LFLAGS = -L$(HOME)/cmpt433/public/asound_lib_BBB -L${CURDIR}/curl_bbg/libs/ -L${
 all:
 	$(CC_C) $(CFLAGS) main.c InputManager.c Accelerometer.c Potentiometer.c Joystick.c game_core.c client_interface.c seg_display.c textToSpeech.c audioMixer.c LED.c Buttons.c -o $(OUTDIR)/$(OUTFILE) $(LFLAGS) -lcurl  -ljson-c -lasound
 	cp -R audio $(OUTDIR)/
+	cp name.txt $(OUTDIR)/
