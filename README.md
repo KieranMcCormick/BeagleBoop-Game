@@ -2,11 +2,13 @@
 
 1. Build project to your public folder
 
-2. Copy gameTest, audio folder, and name.txt config file to ~/
+2. Copy the executable `gameTest`, audio folder `audio`, and config file `name.txt` to the targets ~/
+
 
 3. Make the service shell script:
-cd ~/
-nano beagleboop.sh
+
+`# cd ~/`
+`# nano beagleboop.sh`
 
 ```
 #!/bin/bash
@@ -16,11 +18,13 @@ sleep 10
 
 save and exit nano
 
-chmod +x beagleboop.sh
+`# chmod +x beagleboop.sh`
 
-4. Setup the service to run your shell script
-cd /lib/systemd/system
-nano beagleboop.service
+<span>4</span>. Setup the service to run your shell script
+
+`# cd /lib/systemd/system`
+
+`# nano beagleboop.service`
 
 ```
 [Unit]
@@ -30,12 +34,13 @@ Description=BeagleBoop game
 WorkingDirectory=/
 ExecStart=/root/beagleboop.sh
 SyslogIdentifier=BeagleBoop
-```
 
 [Install]
 WantedBy=multi-user.target
+```
 
 save and exit nano
 
-5. Enable service on boot
-systemctl enable beagleboop.service
+<span>5</span>. Enable service on boot
+
+`systemctl enable beagleboop.service`
