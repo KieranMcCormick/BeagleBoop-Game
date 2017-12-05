@@ -1,6 +1,8 @@
 - note - The latest version can only be ran from root directory
 
-1. Build project to your public folder
+1. Build project to your public folder by running 
+
+`# make`
 
 2. Copy the executable `gameTest`, audio folder `audio`, and config file `name.txt` to the targets ~/
 
