@@ -8,6 +8,7 @@
 3. Make the service shell script:
 
 `# cd ~/`
+
 `# nano beagleboop.sh`
 
 ```
