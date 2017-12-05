@@ -10,11 +10,13 @@ Starting the game automatically on boot:
 4. Make the service shell script:
 cd ~/
 nano beagleboop.sh
+
 ```
 #!/bin/bash
 sleep 10
 /root/gameTest
 ```
+
 save and exit nano
 
 chmod +x beagleboop.sh
@@ -22,6 +24,7 @@ chmod +x beagleboop.sh
 5. Setup the service to run your shell script
 cd /lib/systemd/system
 nano beagleboop.service
+
 ```
 [Unit]
 Description=BeagleBoop game
@@ -31,6 +34,7 @@ WorkingDirectory=/
 ExecStart=/root/beagleboop.sh
 SyslogIdentifier=BeagleBoop
 ```
+
 [Install]
 WantedBy=multi-user.target
 
