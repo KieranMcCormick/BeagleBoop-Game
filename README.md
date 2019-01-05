@@ -1,4 +1,4 @@
-- note - The latest version can only be ran from root directory
+- note - The latest version can only be run from the root directory
 
 <span>1</span>. Build the project on your host to your public folder by running 
 
